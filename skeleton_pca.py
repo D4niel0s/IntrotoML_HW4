@@ -55,7 +55,6 @@ def PCA(X, k):
 	"""
 	n = X.shape[0]
 	normX = X - np.mean(X, axis=0)
-	
 	Sigma = (1/n) * np.matmul(normX.T, normX)
 
 	vals, vecs = np.linalg.eig(Sigma)
@@ -70,7 +69,7 @@ def PCA(X, k):
 	
 
 def main():
-	images, h,w = get_pictures_by_name("Gerhard Schroeder")
+	images, h,w = get_pictures_by_name("Hugo Chavez")
 	X = np.array([images[i] for i in range(len(images))])
 	U,S = PCA(X, 10)
 
@@ -79,11 +78,35 @@ def main():
 	for i in range(2):
 		for j in range(5):
 			axis[i,j].imshow(U[i*5 + j].reshape((h, w)), cmap=plt.cm.gray)
-			axis[i,j].set_title("PC No."+str(i*5 + j))
+			axis[i,j].set_title("PC No."+str(i*5 + j + 1))
 			axis[i,j].axis("off")
 
-	plt.suptitle("Principal components")
+	plt.suptitle("Principal components (my alg.)")
+
+
+	import sklearn.decomposition
+	from sklearn.preprocessing import StandardScaler
+
+	# Standardize the data
+	scaler = StandardScaler()
+	X_scaled = scaler.fit_transform(X)
+
+	# Create a PCA instance
+	pca = sklearn.decomposition.PCA(n_components=10)  # Reduce to 2 principal components
+
+	# Fit the PCA model and transform the data
+	X_pca = pca.fit_transform(X_scaled)
+
+	figure1, axis1 = plt.subplots(2, 5) 
+	for i in range(2):
+		for j in range(5):
+			axis1[i,j].imshow(pca.components_[i*5 + j].reshape((h, w)), cmap=plt.cm.gray)
+			axis1[i,j].set_title("PC No."+str(i*5 + j + 1))
+			axis1[i,j].axis("off")
+
+	plt.suptitle("Principal components (sklearn)")
 	plt.show()
+
 
 	
 	
