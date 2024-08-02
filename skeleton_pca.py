@@ -69,47 +69,86 @@ def PCA(X, k):
 	
 
 def main():
-	images, h,w = get_pictures_by_name("Hugo Chavez")
+	images, h,w = get_pictures_by_name("Colin Powell")
 	X = np.array([images[i] for i in range(len(images))])
-	U,S = PCA(X, 10)
 
+	partb(X, h,w)
+	partc(X, h,w)
 
-	figure, axis = plt.subplots(2, 5) 
-	for i in range(2):
-		for j in range(5):
-			axis[i,j].imshow(U[i*5 + j].reshape((h, w)), cmap=plt.cm.gray)
-			axis[i,j].set_title("PC No."+str(i*5 + j + 1))
-			axis[i,j].axis("off")
-
-	plt.suptitle("Principal components (my alg.)")
-
-
-	import sklearn.decomposition
-	from sklearn.preprocessing import StandardScaler
-
-	# Standardize the data
-	scaler = StandardScaler()
-	X_scaled = scaler.fit_transform(X)
-
-	# Create a PCA instance
-	pca = sklearn.decomposition.PCA(n_components=10)  # Reduce to 2 principal components
-
-	# Fit the PCA model and transform the data
-	X_pca = pca.fit_transform(X_scaled)
-
-	figure1, axis1 = plt.subplots(2, 5) 
-	for i in range(2):
-		for j in range(5):
-			axis1[i,j].imshow(pca.components_[i*5 + j].reshape((h, w)), cmap=plt.cm.gray)
-			axis1[i,j].set_title("PC No."+str(i*5 + j + 1))
-			axis1[i,j].axis("off")
-
-	plt.suptitle("Principal components (sklearn)")
 	plt.show()
 
 
 	
-	
+def partb(X, h,w):
+	U,S = PCA(X, 10)
+
+	#Plot all Principle components
+	fig, axs = plt.subplots(nrows=2, ncols=1, constrained_layout=True)
+	fig.suptitle('Principle Components')
+	for ax in axs:
+		ax.remove()
+
+	gridspec = axs[0].get_subplotspec().get_gridspec()
+	subfigs = [fig.add_subfigure(gs) for gs in gridspec]
+
+	for row, subfig in enumerate(subfigs):
+		axs = subfig.subplots(nrows=1, ncols=5)
+		for col, ax in enumerate(axs):
+			ax.imshow(U[row*5 + col].reshape((h, w)), cmap=plt.cm.gray)
+			ax.set_title(f'PC No.{row*5 + col + 1}')
+			ax.axis("off")
+
+
+def partc(X, h,w):
+	indices = np.random.randint(0, X.shape[0], 5)
+	ks = [1, 5, 10, 30, 50, 100]
+	output = np.zeros((6,5,X.shape[1]))
+
+	errs = np.zeros(6)
+
+	i=0
+	for k in ks:
+		U,S = PCA(X, k)
+
+		for img in X:
+			errs[i] += np.linalg.norm(img - (U.T @ (U @ img)))
+
+		for j in range(5):
+			output[i][j] = (U.T @ (U @ X[indices[j]]))
+
+		i += 1
+		
+
+	#Plotting everything in a (kindof) nice format
+	plt.figure(2)
+	plt.title("PCA reconstruction error as a function of k")
+	plt.plot(ks, errs, label="Reconstruction error", color="red")
+	plt.xlabel("k")
+	plt.legend()
+
+	fig, axs = plt.subplots(nrows=7, ncols=1, constrained_layout=True)
+	for ax in axs:
+		ax.remove()
+
+	gridspec = axs[0].get_subplotspec().get_gridspec()
+	subfigs = [fig.add_subfigure(gs) for gs in gridspec]
+
+	for row, subfig in enumerate(subfigs):
+		if (row == 0):
+			subfig.suptitle("Original images")
+		else:
+			subfig.suptitle(f"k={ks[row-1]}")
+			
+		axs = subfig.subplots(nrows=1, ncols=5)
+		for col, ax in enumerate(axs):
+			if(row == 0):
+				ax.imshow(X[indices[col]].reshape((h, w)), cmap=plt.cm.gray)
+				ax.axis("off")
+
+			else:
+				ax.imshow(output[row-1][col].reshape((h, w)), cmap=plt.cm.gray)
+				ax.axis("off")
+
 	
 
 
