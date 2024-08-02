@@ -60,7 +60,7 @@ def PCA(X, k):
 	vals, vecs = np.linalg.eig(Sigma)
 	vecs = vecs.T
 
-	indices = np.argpartition(vals, 1*k)[-1*k:]
+	indices = np.argpartition(vals, -1*k)[-1*k:]
 	indices.sort()
 	U = np.array(vecs[indices])
 	S = np.array(vals[indices])
