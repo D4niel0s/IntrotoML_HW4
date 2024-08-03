@@ -60,7 +60,7 @@ def PCA(X, k):
 	
 	S = S**2 #The eigenvalues of normX are the squares of the singular values
 
-	indices = np.argpartition(S, -1*k)[-1*k:] #k largest eigenvalues / singular values
+	indices = np.argpartition(S, -k)[-k:] #k largest eigenvalues / singular values
 	
 	U = Vh[indices]
 	S = S[indices]
@@ -69,7 +69,7 @@ def PCA(X, k):
 	
 
 def main():
-	images, h,w = get_pictures_by_name("Colin Powell")
+	images, h,w = get_pictures_by_name("Gerhard Schroeder")
 	X = np.array([images[i] for i in range(len(images))])
 
 	partb(X, h,w)
