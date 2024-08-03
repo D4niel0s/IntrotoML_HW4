@@ -69,7 +69,7 @@ def PCA(X, k):
 	
 
 def main():
-	images, h,w = get_pictures_by_name("Gerhard Schroeder")
+	images, h,w = get_pictures_by_name("George W Bush")
 	X = np.array([images[i] for i in range(len(images))])
 
 	partb(X, h,w)
@@ -84,7 +84,7 @@ def partb(X, h,w):
 
 	#Plot all Principle components
 	fig, axs = plt.subplots(nrows=2, ncols=1, constrained_layout=True)
-	fig.suptitle('Principle Components')
+	fig.suptitle('Principal Components')
 	for ax in axs:
 		ax.remove()
 
