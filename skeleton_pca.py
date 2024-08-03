@@ -55,15 +55,15 @@ def PCA(X, k):
 	"""
 	n = X.shape[0]
 	normX = X - np.mean(X, axis=0)
-	Sigma = (1/n) * np.matmul(normX.T, normX)
+	
+	U, S, Vh = np.linalg.svd(normX)
+	
+	S = S**2 #The eigenvalues of normX are the squares of the singular values
 
-	vals, vecs = np.linalg.eig(Sigma)
-	vecs = vecs.T
-
-	indices = np.argpartition(vals, -1*k)[-1*k:]
-	indices.sort()
-	U = np.array(vecs[indices])
-	S = np.array(vals[indices])
+	indices = np.argpartition(S, -1*k)[-1*k:] #k largest eigenvalues / singular values
+	
+	U = Vh[indices]
+	S = S[indices]
 
 	return U,S
 	
