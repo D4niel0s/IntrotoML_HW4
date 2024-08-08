@@ -110,10 +110,10 @@ def partc(X, h,w):
 	for k in ks:
 		U,S = PCA(X, k)
 
-		for img in X:
+		for img in X: #Sum up all errors
 			errs[i] += np.linalg.norm(img - (U.T @ (U @ img)))
 
-		for j in range(5):
+		for j in range(5): #Caculate the five random images
 			output[i][j] = (U.T @ (U @ X[indices[j]]))
 
 		i += 1
