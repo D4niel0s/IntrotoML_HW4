@@ -21,7 +21,6 @@ def get_pictures_by_name(name='Ariel Sharon'):
 	lfw_people = load_data()
 	selected_images = []
 	n_samples, h, w = lfw_people.images.shape
-	print("Got: ", list(lfw_people.target_names))
 	target_label = list(lfw_people.target_names).index(name)
 	for image, target in zip(lfw_people.images, lfw_people.target):
 		if (target == target_label):
@@ -59,13 +58,13 @@ def PCA(X, k):
 	U, S, Vh = np.linalg.svd(normX)
 	
 	S = S**2 #The eigenvalues of normX are the squares of the singular values
-
-	indices = np.argpartition(S, -k)[-k:] #k largest eigenvalues / singular values
 	
-	U = Vh[indices]
-	S = S[indices]
+	#Take k largest eigenvalues
+	U = Vh[:k]
+	S = S[:k]
+	indices = S.argsort()
 
-	return U,S
+	return U[indices],S[indices]
 	
 
 def main():
